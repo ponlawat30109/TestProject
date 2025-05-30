@@ -99,13 +99,7 @@ public class GameManager : Singleton<GameManager>
         }
 
         if (isDraw)
-        {
-            UIManager.Instance.WinnerPopup.gameObject.SetActive(true);
-            TMP_Text winnerText = UIManager.Instance.WinnerPopup.GetComponentInChildren<TMP_Text>();
-            if (winnerText != null)
-                winnerText.text = "Draw!";
-            EndGame();
-        }
+            ShowWinnerPopup();
     }
 
     public void EndGame()
@@ -113,13 +107,13 @@ public class GameManager : Singleton<GameManager>
         IsGameOver = true;
     }
 
-    public void ShowWinnerPopup(string winner)
+    public void ShowWinnerPopup(string winner = "")
     {
         UIManager.Instance.WinnerPopup.gameObject.SetActive(true);
         TMP_Text winnerText = UIManager.Instance.WinnerPopup.GetComponentInChildren<TMP_Text>();
         if (winnerText != null)
         {
-            winnerText.text = $"Player {winner} Wins!";
+            winnerText.text = isDraw ? "Draw!" : $"Player {winner} Wins!";
         }
     }
 
