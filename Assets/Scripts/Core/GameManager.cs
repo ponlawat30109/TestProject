@@ -7,6 +7,7 @@ public class GameManager : Singleton<GameManager>
 {
     [SerializeField, ReadOnlyInspector] private bool isGameOver = false;
     [SerializeField, ReadOnlyInspector] private bool isPlayerTurn = true;
+    [SerializeField, ReadOnlyInspector] private bool isDraw = false;
 
     public bool IsGameOver { get => isGameOver; set => isGameOver = value; }
     public bool IsPlayerTurn { get => isPlayerTurn; set => isPlayerTurn = value; }
@@ -38,7 +39,7 @@ public class GameManager : Singleton<GameManager>
             text.text = IsPlayerTurn ? "X" : "O";
 
         button.interactable = false;
-        CheckForWinner();
+        CheckForEnding();
         GetNextTurn();
     }
 
@@ -60,6 +61,12 @@ public class GameManager : Singleton<GameManager>
         UIManager.Instance.WinnerPopup.gameObject.SetActive(false);
     }
 
+    public void CheckForEnding()
+    {
+        CheckForWinner();
+        CheckForDraw();
+    }
+
     public void CheckForWinner()
     {
         foreach (var condition in winConditions)
@@ -76,6 +83,28 @@ public class GameManager : Singleton<GameManager>
                 EndGame();
                 return;
             }
+        }
+    }
+
+    public void CheckForDraw()
+    {
+        isDraw = true;
+        foreach (Button button in UIManager.Instance.GridButtons)
+        {
+            if (button.interactable)
+            {
+                isDraw = false;
+                break;
+            }
+        }
+
+        if (isDraw)
+        {
+            UIManager.Instance.WinnerPopup.gameObject.SetActive(true);
+            TMP_Text winnerText = UIManager.Instance.WinnerPopup.GetComponentInChildren<TMP_Text>();
+            if (winnerText != null)
+                winnerText.text = "Draw!";
+            EndGame();
         }
     }
 
