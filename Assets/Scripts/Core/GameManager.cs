@@ -99,7 +99,10 @@ public class GameManager : Singleton<GameManager>
         }
 
         if (isDraw)
+        {
             ShowWinnerPopup();
+            EndGame();
+        }
     }
 
     public void EndGame()
