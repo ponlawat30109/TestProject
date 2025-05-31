@@ -63,11 +63,13 @@ public class GameManager : Singleton<GameManager>
 
     public void CheckForEnding()
     {
-        CheckForWinner();
-        CheckForDraw();
+        if (!CheckForWinner())
+        {
+            CheckForDraw();
+        }
     }
 
-    public void CheckForWinner()
+    public bool CheckForWinner()
     {
         foreach (var condition in winConditions)
         {
@@ -75,19 +77,19 @@ public class GameManager : Singleton<GameManager>
             var grid2 = UIManager.Instance.GridButtons[condition[1]].GetComponentInChildren<TMP_Text>().text;
             var grid3 = UIManager.Instance.GridButtons[condition[2]].GetComponentInChildren<TMP_Text>().text;
 
-            if (string.IsNullOrEmpty(grid1) && string.IsNullOrEmpty(grid2) && string.IsNullOrEmpty(grid3))
-                return;
-            if (grid1 == grid2 && grid2 == grid3)
+            if (!string.IsNullOrEmpty(grid1) && grid1 == grid2 && grid2 == grid3)
             {
                 ShowWinnerPopup(grid1);
                 EndGame();
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     public void CheckForDraw()
     {
+        Debug.Log("Checking for draw...");
         isDraw = true;
         foreach (Button button in UIManager.Instance.GridButtons)
         {
