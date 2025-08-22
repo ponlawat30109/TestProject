@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,10 +33,7 @@ public class GameManager : Singleton<GameManager>
         if (IsGameOver || !button.interactable)
             return;
 
-        TMP_Text text = button.GetComponentInChildren<TMP_Text>();
-        if (text != null)
-            text.text = IsPlayerTurn ? "X" : "O";
-
+        SetButtonText(button, IsPlayerTurn ? "X" : "O");
         button.interactable = false;
         CheckForEnding();
         GetNextTurn();
@@ -48,15 +44,12 @@ public class GameManager : Singleton<GameManager>
         foreach (Button button in UIManager.Instance.GridButtons)
         {
             button.interactable = true;
-            TMP_Text text = button.GetComponentInChildren<TMP_Text>();
-            if (text != null)
-            {
-                text.text = string.Empty;
-            }
+            SetButtonText(button, string.Empty);
         }
 
         IsGameOver = false;
         IsPlayerTurn = true;
+        isDraw = false;
 
         UIManager.Instance.WinnerPopup.gameObject.SetActive(false);
     }
@@ -73,12 +66,13 @@ public class GameManager : Singleton<GameManager>
     {
         foreach (var condition in winConditions)
         {
-            var grid1 = UIManager.Instance.GridButtons[condition[0]].GetComponentInChildren<TMP_Text>().text;
-            var grid2 = UIManager.Instance.GridButtons[condition[1]].GetComponentInChildren<TMP_Text>().text;
-            var grid3 = UIManager.Instance.GridButtons[condition[2]].GetComponentInChildren<TMP_Text>().text;
+            string grid1 = GetButtonText(UIManager.Instance.GridButtons[condition[0]]);
+            string grid2 = GetButtonText(UIManager.Instance.GridButtons[condition[1]]);
+            string grid3 = GetButtonText(UIManager.Instance.GridButtons[condition[2]]);
 
             if (!string.IsNullOrEmpty(grid1) && grid1 == grid2 && grid2 == grid3)
             {
+                isDraw = false;
                 ShowWinnerPopup(grid1);
                 EndGame();
                 return true;
@@ -129,5 +123,18 @@ public class GameManager : Singleton<GameManager>
 
         IsPlayerTurn = !IsPlayerTurn;
         return IsPlayerTurn;
+    }
+
+    private void SetButtonText(Button button, string text)
+    {
+        TMP_Text tmp = button.GetComponentInChildren<TMP_Text>();
+        if (tmp != null)
+            tmp.text = text;
+    }
+
+    private string GetButtonText(Button button)
+    {
+        TMP_Text tmp = button.GetComponentInChildren<TMP_Text>();
+        return tmp != null ? tmp.text : string.Empty;
     }
 }
